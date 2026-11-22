@@ -13,7 +13,7 @@ Freezes Discord's decorative animations on their current frame, either **always*
 | Freeze animated role colours | On |
 | Freeze other UI animations | On |
 | Experimental: halt JS animation loops (canvas / WebGL / Lottie), unfocused mode only | Off |
-| Debug: log per-category freeze counts | Off |
+| Debug: log freeze counts and a detailed media report to the console | Off |
 
 "Enable FocusFreeze" is Vencord's own plugin toggle.
 
@@ -34,7 +34,7 @@ Type-checks clean against stub Vencord types. Ran in headless Edge against a tes
 
 ## Install
 1. Follow [Vencord's source build guide](https://docs.vencord.dev/installing/) and [custom plugin guide](https://docs.vencord.dev/installing/custom-plugins/).
-2. Copy `index.tsx` and `README.md` into `Vencord/src/userplugins/FocusFreeze/`.
+2. Copy `index.ts` and `README.md` into `Vencord/src/userplugins/FocusFreeze/`.
 3. Run `pnpm build`, inject your custom build, restart Discord, enable **FocusFreeze**.
 
 A prebuilt Vencord cannot load source userplugins.

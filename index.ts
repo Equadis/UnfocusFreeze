@@ -76,18 +76,9 @@ const settings = definePluginSettings({
         onChange: () => update(true)
     },
     debug: {
-        description: "Log what was frozen, per category, to the console each time freezing starts",
+        description: "Log what was frozen, per category, plus a detailed report, to the console each time freezing starts",
         type: OptionType.BOOLEAN,
         default: false
-    },
-    dumpReport: {
-        type: OptionType.COMPONENT,
-        component: () => (
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <button onClick={() => runDump(0)}>Save diagnostics now</button>
-                <button onClick={() => runDump(6000)}>Save diagnostics in 6s (switch windows first)</button>
-            </div>
-        )
     }
 });
 
@@ -500,7 +491,12 @@ function freeze() {
     });
 
     if (settings.store.pauseFrameLoops && settings.store.mode === "unfocused") patchRaf();
-    if (settings.store.debug) logger.info("Frozen:", { ...stats });
+    if (settings.store.debug) {
+        logger.info("Frozen:", { ...stats });
+        console.groupCollapsed("[FocusFreeze] report");
+        console.log(buildReport());
+        console.groupEnd();
+    }
 }
 
 function thaw() {
@@ -545,7 +541,7 @@ function update(reapply = false) {
 }
 
 // ---------------------------------------------------------------------------
-// Diagnostics: writes a text report so mismatched selectors can be fixed.
+// Diagnostics: logged to the console when the Debug setting is on.
 // ---------------------------------------------------------------------------
 
 function trimUrl(u: string) {
@@ -618,19 +614,6 @@ function buildReport() {
     }
     for (const [k, n] of [...counts].sort((a, b) => b[1] - a[1]).slice(0, 40)) out.push(`${n}x ${k}`);
     return out.join("\n");
-}
-
-function runDump(delayMs: number) {
-    setTimeout(() => {
-        const blob = new Blob([buildReport()], { type: "text/plain" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "FocusFreeze-diagnostics.txt";
-        document.body.append(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 10000);
-    }, delayMs);
 }
 
 const onFocusChange = () => update();
